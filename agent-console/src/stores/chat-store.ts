@@ -30,7 +30,7 @@ interface ChatStoreState {
   reset: () => void;
 }
 
-export const useChatStore = create<ChatStoreState>((set, get) => ({
+export const useChatStore = create<ChatStoreState>((set) => ({
   messages: [],
   streams: new Map(),
 
@@ -56,8 +56,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         // First token for this stream — create agent message
         stream = {
           streamId: msg.stream_id,
-          tokens: [],
-          renderedText: "",
+          tokens: [msg.text],
+          renderedText: msg.text,
           status: "streaming",
           toolCalls: [],
         };
