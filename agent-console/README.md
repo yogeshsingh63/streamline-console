@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Streamline Console — Agent Console
 
-## Getting Started
+Streamline Console is a premium Next.js 16 (App Router) client application designed to interface with the Alchemyst Agent Server. It features smooth incremental token rendering, mid-stream tool call freezing, a live trace timeline, and a recursive JSON diff inspector. It is built to survive network latency, packet drops, duplicate messages, and connection disruptions without state corruption.
 
-First, run the development server:
+## Architectural Approach
+The application is structured using a strict protocol-first architecture. A central `WebSocketManager` handles the connection lifecycle and pipes incoming packets to a sequence-based `ReorderBuffer` that reorders out-of-order messages and filters out duplicate frames. The dispatcher then routes these validated events to globally managed Zustand stores, decoupling network ingestion from the React render loop to avoid UI thread blocking.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## WebSocket Connection State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> DISCONNECTED
+    
+    DISCONNECTED --> CONNECTING : connect()
+    CONNECTING --> CONNECTED : onOpen
+    CONNECTING --> RECONNECTING : onError / onClose
+    
+    CONNECTED --> RESUMING : has session (processedSeq > 0)
+    CONNECTED --> READY : no session
+    
+    RESUMING --> STREAMING : TOKEN received
+    READY --> STREAMING : USER_MESSAGE sent / TOKEN received
+    
+    STREAMING --> TOOL_PENDING : TOOL_CALL received
+    STREAMING --> READY : STREAM_END received
+    
+    TOOL_PENDING --> STREAMING : TOOL_RESULT received / timeout
+    
+    STREAMING --> RECONNECTING : onClose / onError (drop)
+    TOOL_PENDING --> RECONNECTING : onClose / onError (drop)
+    READY --> RECONNECTING : onClose / onError (drop)
+    
+    RECONNECTING --> CONNECTING : retry timer expires
+    RECONNECTING --> DISCONNECTED : max retries exceeded
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quick Start Guide
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Run the Agent Server
+Navigate to the `agent-server` directory and start it (default is port 4747):
+```bash
+cd ../agent-server
+npm install
+npm start
+```
+*To test under network stress, run it in Chaos Mode:*
+```bash
+npm start -- --mode chaos
+```
 
-## Learn More
+### 2. Run the Console Frontend
+Navigate to the `agent-console` directory, install dependencies, and start the Next.js dev server:
+```bash
+cd ../agent-console
+npm install
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Run the Unit Tests
+We have implemented extensive test suites covering the reordering buffer, diff engine, state store, and heartbeat handler:
+```bash
+npm run test  # Runs Vitest
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Application Screenshots
+*(Please replace these placeholders with your actual screenshots showing these states)*
 
-## Deploy on Vercel
+### A. Streamed Response with Tool Call Interrupt
+![Tool Call Interrupt Placeholder](/public/screenshots/screenshot_tool_call.png)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### B. Trace Timeline with Event Filters
+![Trace Timeline Placeholder](/public/screenshots/screenshot_trace.png)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### C. Context Inspector with Diff Highlights
+![Context Inspector Diff Placeholder](/public/screenshots/screenshot_context_diff.png)
