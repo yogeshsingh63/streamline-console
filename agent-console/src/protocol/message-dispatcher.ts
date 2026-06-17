@@ -11,7 +11,6 @@ import { useChatStore } from "@/stores/chat-store";
 import { useTraceStore } from "@/stores/trace-store";
 import { useContextStore } from "@/stores/context-store";
 import { useConnectionStore } from "@/stores/connection-store";
-import { TOOL_ACK_DEADLINE_MS } from "@/lib/constants";
 
 /** Callback for sending messages back via WebSocket */
 type SendToolAckFn = (callId: string) => void;

@@ -26,7 +26,7 @@ interface ContextStoreState {
   reset: () => void;
 }
 
-export const useContextStore = create<ContextStoreState>((set, get) => ({
+export const useContextStore = create<ContextStoreState>((set) => ({
   contexts: new Map(),
   activeContextId: null,
 

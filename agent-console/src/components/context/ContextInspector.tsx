@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useContextStore } from "@/stores/context-store";
 import type { DiffEntry, ContextHistory } from "@/protocol/types";
 import styles from "./ContextInspector.module.css";
