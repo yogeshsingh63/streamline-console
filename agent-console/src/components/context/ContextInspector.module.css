@@ -1,0 +1,234 @@
+/* ─────────────────────────────────────────────────────────────
+   Context Inspector Styles
+   ───────────────────────────────────────────────────────────── */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-0);
+  border-left: 1px solid var(--border-subtle);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: var(--header-height);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────── */
+
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text-secondary);
+  background: var(--bg-2);
+}
+
+.tabActive {
+  color: var(--accent-yellow);
+  border-bottom-color: var(--accent-yellow);
+}
+
+/* ── Scrubber ───────────────────────────────────────────────── */
+
+.scrubber {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.scrubberLabel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.scrubberSlider {
+  flex: 1;
+  height: 4px;
+  appearance: none;
+  background: var(--bg-4);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.scrubberSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-yellow);
+  cursor: grab;
+  border: 2px solid var(--bg-0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Diff Summary ───────────────────────────────────────────── */
+
+.diffSummary {
+  display: flex;
+  gap: 12px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.diffStat {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.diffAdded {
+  background: var(--accent-green-bg);
+  color: var(--accent-green);
+}
+
+.diffRemoved {
+  background: var(--accent-red-bg);
+  color: var(--accent-red);
+}
+
+.diffChanged {
+  background: var(--accent-yellow-bg);
+  color: var(--accent-yellow);
+}
+
+/* ── JSON Tree ──────────────────────────────────────────────── */
+
+.treeContainer {
+  flex: 1;
+  overflow: auto;
+  padding: 8px 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.treeNode {
+  padding-left: 16px;
+}
+
+.treeKey {
+  color: var(--text-secondary);
+}
+
+.treeColon {
+  color: var(--text-muted);
+  margin: 0 4px;
+}
+
+.treeString {
+  color: var(--accent-green);
+}
+
+.treeNumber {
+  color: var(--accent-blue);
+}
+
+.treeBoolean {
+  color: var(--accent-orange);
+}
+
+.treeNull {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.treeBracket {
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.treeBracket:hover {
+  color: var(--text-primary);
+}
+
+.treeRow {
+  display: flex;
+  align-items: baseline;
+  padding: 0 16px;
+  min-height: 22px;
+  cursor: default;
+}
+
+.treeRow:hover {
+  background: var(--bg-2);
+}
+
+.treeRowAdded {
+  background: var(--accent-green-bg);
+}
+
+.treeRowRemoved {
+  background: var(--accent-red-bg);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.treeRowChanged {
+  background: var(--accent-yellow-bg);
+}
+
+.treeToggle {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.treeToggle:hover {
+  color: var(--text-primary);
+}
+
+/* ── Empty State ────────────────────────────────────────────── */
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
