@@ -82,4 +82,25 @@ describe("ReorderBuffer", () => {
     expect(buffer.getExpectedSeq()).toBe(10);
     expect(buffer.getProcessedSeq()).toBe(9);
   });
+
+  it("should handle a fully reversed sequence of messages", () => {
+    const msg5 = makeMsg(5, "five");
+    const msg4 = makeMsg(4, "four");
+    const msg3 = makeMsg(3, "three");
+    const msg2 = makeMsg(2, "two");
+    const msg1 = makeMsg(1, "one");
+
+    expect(buffer.insert(msg5)).toEqual([]);
+    expect(buffer.insert(msg4)).toEqual([]);
+    expect(buffer.insert(msg3)).toEqual([]);
+    expect(buffer.insert(msg2)).toEqual([]);
+    
+    expect(buffer.getBufferSize()).toBe(4);
+    
+    const result = buffer.insert(msg1);
+    expect(result).toEqual([msg1, msg2, msg3, msg4, msg5]);
+    expect(buffer.getBufferSize()).toBe(0);
+    expect(buffer.getExpectedSeq()).toBe(6);
+    expect(buffer.getProcessedSeq()).toBe(5);
+  });
 });
