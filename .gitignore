@@ -1,0 +1,16 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# next.js
+agent-console/.next/
+agent-console/out/
+
+# build
+agent-server/dist/
+
+# misc
+.DS_Store
+*.pem
+.env*.local
+*.tsbuildinfo
