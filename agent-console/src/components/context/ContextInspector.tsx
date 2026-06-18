@@ -152,13 +152,52 @@ function JsonTreeNode({
   path,
   diffMap,
   depth,
+  isInheritedRemoved = false,
 }: {
   data: unknown;
   path: string[];
   diffMap: Map<string, DiffEntry>;
   depth: number;
+  isInheritedRemoved?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState(depth > 2);
+
+  // Find keys that were removed at this specific path level
+  const removedKeysAtThisLevel = useMemo(() => {
+    if (isInheritedRemoved) return [];
+    const keys: { key: string; oldValue: unknown }[] = [];
+    for (const d of diffMap.values()) {
+      if (d.type === "removed" && d.path.length === path.length + 1) {
+        const matchesPath = path.every((p, idx) => d.path[idx] === p);
+        if (matchesPath) {
+          keys.push({
+            key: d.path[d.path.length - 1],
+            oldValue: d.oldValue,
+          });
+        }
+      }
+    }
+    return keys;
+  }, [diffMap, path, isInheritedRemoved]);
+
+  // Find array indices that were removed at this specific path level
+  const removedIndicesAtThisLevel = useMemo(() => {
+    if (isInheritedRemoved) return [];
+    const indices: { index: number; oldValue: unknown }[] = [];
+    for (const d of diffMap.values()) {
+      if (d.type === "removed" && d.path.length === path.length + 1) {
+        const matchesPath = path.every((p, idx) => d.path[idx] === p);
+        if (matchesPath) {
+          const indexStr = d.path[d.path.length - 1];
+          const idx = parseInt(indexStr, 10);
+          if (!isNaN(idx)) {
+            indices.push({ index: idx, oldValue: d.oldValue });
+          }
+        }
+      }
+    }
+    return indices.sort((a, b) => a.index - b.index);
+  }, [diffMap, path, isInheritedRemoved]);
 
   if (data === null || data === undefined) {
     return <span className={styles.treeNull}>null</span>;
@@ -183,7 +222,18 @@ function JsonTreeNode({
   }
 
   if (Array.isArray(data)) {
-    if (data.length === 0) {
+    // Combine existing and removed indices
+    const allItems: { index: number; value: unknown; isRemoved: boolean }[] = [];
+    data.forEach((value, idx) => {
+      allItems.push({ index: idx, value, isRemoved: false });
+    });
+    for (const { index, oldValue } of removedIndicesAtThisLevel) {
+      allItems.push({ index, value: oldValue, isRemoved: true });
+    }
+    // Sort items by index
+    allItems.sort((a, b) => a.index - b.index);
+
+    if (allItems.length === 0) {
       return <span className={styles.treeBracket}>[]</span>;
     }
 
@@ -193,20 +243,25 @@ function JsonTreeNode({
           className={styles.treeBracket}
           onClick={() => setCollapsed(!collapsed)}
         >
-          {collapsed ? `[…${data.length}]` : "["}
+          {collapsed ? `[…${allItems.length}]` : "["}
         </span>
         {!collapsed && (
           <>
-            {data.map((item, i) => {
+            {allItems.map(({ index: i, value: item, isRemoved: isItemRemoved }) => {
               const itemPath = [...path, String(i)];
               const pathKey = itemPath.join(".");
               const diffEntry = diffMap.get(pathKey);
-              const rowClass = diffEntry
+              
+              const isNodeRemoved = isInheritedRemoved || isItemRemoved;
+              
+              const rowClass = isNodeRemoved
+                ? styles.treeRowRemoved
+                : diffEntry
                 ? diffEntry.type === "added"
                   ? styles.treeRowAdded
-                  : diffEntry.type === "removed"
-                  ? styles.treeRowRemoved
-                  : styles.treeRowChanged
+                  : diffEntry.type === "changed"
+                  ? styles.treeRowChanged
+                  : ""
                 : "";
 
               return (
@@ -222,6 +277,7 @@ function JsonTreeNode({
                     path={itemPath}
                     diffMap={diffMap}
                     depth={depth + 1}
+                    isInheritedRemoved={isNodeRemoved}
                   />
                 </div>
               );
@@ -237,7 +293,17 @@ function JsonTreeNode({
 
   if (typeof data === "object") {
     const entries = Object.entries(data as Record<string, unknown>);
-    if (entries.length === 0) {
+    
+    // Combine existing and removed keys
+    const allEntries: { key: string; value: unknown; isRemoved: boolean }[] = [];
+    for (const [key, value] of entries) {
+      allEntries.push({ key, value, isRemoved: false });
+    }
+    for (const { key, oldValue } of removedKeysAtThisLevel) {
+      allEntries.push({ key, value: oldValue, isRemoved: true });
+    }
+
+    if (allEntries.length === 0) {
       return <span className={styles.treeBracket}>{"{}"}</span>;
     }
 
@@ -247,20 +313,25 @@ function JsonTreeNode({
           className={styles.treeBracket}
           onClick={() => setCollapsed(!collapsed)}
         >
-          {collapsed ? `{…${entries.length}}` : "{"}
+          {collapsed ? `{…${allEntries.length}}` : "{"}
         </span>
         {!collapsed && (
           <>
-            {entries.map(([key, value]) => {
+            {allEntries.map(({ key, value, isRemoved: isEntryRemoved }) => {
               const itemPath = [...path, key];
               const pathKey = itemPath.join(".");
               const diffEntry = diffMap.get(pathKey);
-              const rowClass = diffEntry
+              
+              const isNodeRemoved = isInheritedRemoved || isEntryRemoved;
+              
+              const rowClass = isNodeRemoved
+                ? styles.treeRowRemoved
+                : diffEntry
                 ? diffEntry.type === "added"
                   ? styles.treeRowAdded
-                  : diffEntry.type === "removed"
-                  ? styles.treeRowRemoved
-                  : styles.treeRowChanged
+                  : diffEntry.type === "changed"
+                  ? styles.treeRowChanged
+                  : ""
                 : "";
 
               return (
@@ -276,6 +347,7 @@ function JsonTreeNode({
                     path={itemPath}
                     diffMap={diffMap}
                     depth={depth + 1}
+                    isInheritedRemoved={isNodeRemoved}
                   />
                 </div>
               );

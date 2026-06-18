@@ -41,6 +41,7 @@ export class WebSocketManager {
 
   /** Whether we had a previous session (for RESUME logic) */
   private hadPreviousSession: boolean = false;
+  private wasStreamingBeforeDisconnect: boolean = false;
 
   constructor() {
     this.reorderBuffer = new ReorderBuffer();
@@ -156,8 +157,8 @@ export class WebSocketManager {
       this.retryCount = 0;
       this.setState(ConnectionState.CONNECTED);
 
-      // If we had a previous session, send RESUME
-      if (this.hadPreviousSession) {
+      // If we had a previous session and were actively streaming, send RESUME
+      if (this.hadPreviousSession && this.wasStreamingBeforeDisconnect) {
         const lastSeq = this.reorderBuffer.getProcessedSeq();
         this.send({ type: "RESUME", last_seq: lastSeq });
         this.setState(ConnectionState.RESUMING);
@@ -166,6 +167,7 @@ export class WebSocketManager {
       }
 
       this.hadPreviousSession = true;
+      this.wasStreamingBeforeDisconnect = false;
     };
 
     this.ws.onmessage = (event: MessageEvent) => {
@@ -241,6 +243,13 @@ export class WebSocketManager {
     if (this.retryCount >= RECONNECT_MAX_ATTEMPTS) {
       this.setState(ConnectionState.DISCONNECTED);
       return;
+    }
+
+    // Record if we were actively streaming/resuming before we transition to RECONNECTING
+    if (this.state === ConnectionState.STREAMING || this.state === ConnectionState.TOOL_PENDING || this.state === ConnectionState.RESUMING) {
+      this.wasStreamingBeforeDisconnect = true;
+    } else {
+      this.wasStreamingBeforeDisconnect = false;
     }
 
     this.setState(ConnectionState.RECONNECTING);
