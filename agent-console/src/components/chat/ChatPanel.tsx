@@ -69,7 +69,7 @@ export default function ChatPanel({
       >
         {messages.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>⚡</div>
+            <div className={styles.emptyIcon}>_</div>
             <div className={styles.emptyText}>
               Send a message to start the agent
             </div>
@@ -109,7 +109,7 @@ export default function ChatPanel({
             disabled={!canSend || !inputValue.trim()}
             aria-label="Send message"
           >
-            ↑
+            ➤
           </button>
         </div>
       </form>

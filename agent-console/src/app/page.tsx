@@ -86,7 +86,6 @@ export default function Home() {
       {/* Top bar with panel toggles */}
       <div className={styles.topBar}>
         <div className={styles.logo}>
-          <span className={styles.logoIcon}>⚡</span>
           <span className={styles.logoText}>Streamline Console</span>
         </div>
         <div className={styles.panelToggles}>

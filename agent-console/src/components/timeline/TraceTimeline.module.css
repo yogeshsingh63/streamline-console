@@ -107,6 +107,8 @@
   padding: 5px 16px;
   border-bottom: 1px solid var(--border-subtle);
   font-size: 0.75rem;
+  font-family: var(--font-mono);
+  line-height: 1.5;
   transition: background 0.1s ease;
   cursor: pointer;
 }
@@ -144,38 +146,45 @@
 }
 
 .badgeToken {
-  background: rgba(91, 127, 255, 0.12);
-  color: var(--accent-blue);
+  background: var(--bg-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
 }
 
 .badgeToolCall {
-  background: rgba(167, 139, 250, 0.12);
-  color: var(--accent-purple);
+  background: var(--bg-3);
+  color: var(--text-primary);
+  border: 1px solid var(--text-muted);
 }
 
 .badgeToolResult {
-  background: rgba(52, 211, 153, 0.12);
-  color: var(--accent-green);
+  background: var(--bg-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
 }
 
 .badgeContext {
-  background: rgba(251, 191, 36, 0.12);
-  color: var(--accent-yellow);
+  background: var(--bg-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
 }
 
 .badgePing {
-  background: rgba(34, 211, 238, 0.12);
-  color: var(--accent-cyan);
+  background: var(--bg-2);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
 }
 
 .badgeError {
   background: var(--accent-red-bg);
   color: var(--accent-red);
+  border: 1px solid rgba(248, 113, 113, 0.2);
 }
 
 .badgeStreamEnd {
-  background: rgba(255, 255, 255, 0.06);
+  background: transparent;
   color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
 }
 
 .eventContent {

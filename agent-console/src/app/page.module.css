@@ -34,14 +34,10 @@
 .logoIcon {
   font-size: 1.1rem;
 }
-
 .logoText {
   font-size: 0.9rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
   letter-spacing: -0.02em;
 }
 
@@ -69,9 +65,9 @@
 }
 
 .toggleActive {
-  background: var(--accent-blue-glow);
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--bg-0);
 }
 
 /* ── Main Content ───────────────────────────────────────────── */
