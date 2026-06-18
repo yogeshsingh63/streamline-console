@@ -81,13 +81,12 @@ npm run test  # Runs Vitest
 ---
 
 ## Application Screenshots
-*(Please replace these placeholders with your actual screenshots showing these states)*
 
 ### A. Streamed Response with Tool Call Interrupt
-![Tool Call Interrupt Placeholder](/public/screenshots/screenshot_tool_call.png)
+![Tool Call Interrupt](./public/screenshots/screenshot_tool_call.png)
 
 ### B. Trace Timeline with Event Filters
-![Trace Timeline Placeholder](/public/screenshots/screenshot_trace.png)
+![Trace Timeline](./public/screenshots/screenshot_trace.png)
 
 ### C. Context Inspector with Diff Highlights
-![Context Inspector Diff Placeholder](/public/screenshots/screenshot_context_diff.png)
+![Context Inspector Diff](./public/screenshots/screenshot_context_diff.png)
