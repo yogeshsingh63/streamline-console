@@ -246,10 +246,12 @@ export class WebSocketManager {
     }
 
     // Record if we were actively streaming/resuming before we transition to RECONNECTING
-    if (this.state === ConnectionState.STREAMING || this.state === ConnectionState.TOOL_PENDING || this.state === ConnectionState.RESUMING) {
-      this.wasStreamingBeforeDisconnect = true;
-    } else {
-      this.wasStreamingBeforeDisconnect = false;
+    if (this.state !== ConnectionState.RECONNECTING) {
+      if (this.state === ConnectionState.STREAMING || this.state === ConnectionState.TOOL_PENDING || this.state === ConnectionState.RESUMING) {
+        this.wasStreamingBeforeDisconnect = true;
+      } else {
+        this.wasStreamingBeforeDisconnect = false;
+      }
     }
 
     this.setState(ConnectionState.RECONNECTING);
