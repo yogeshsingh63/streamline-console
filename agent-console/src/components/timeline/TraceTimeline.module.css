@@ -107,6 +107,8 @@
   padding: 5px 16px;
   border-bottom: 1px solid var(--border-subtle);
   font-size: 0.75rem;
+  font-family: var(--font-mono);
+  line-height: 1.5;
   transition: background 0.1s ease;
   cursor: pointer;
 }
@@ -144,38 +146,45 @@
 }
 
 .badgeToken {
-  background: rgba(91, 127, 255, 0.12);
-  color: var(--accent-blue);
+  background: var(--trace-token-bg);
+  color: var(--trace-token);
+  border: 1px solid rgba(147, 197, 253, 0.2);
 }
 
 .badgeToolCall {
-  background: rgba(167, 139, 250, 0.12);
-  color: var(--accent-purple);
+  background: var(--trace-tool-call-bg);
+  color: var(--trace-tool-call);
+  border: 1px solid rgba(192, 132, 252, 0.2);
 }
 
 .badgeToolResult {
-  background: rgba(52, 211, 153, 0.12);
-  color: var(--accent-green);
+  background: var(--trace-tool-result-bg);
+  color: var(--trace-tool-result);
+  border: 1px solid rgba(134, 239, 172, 0.2);
 }
 
 .badgeContext {
-  background: rgba(251, 191, 36, 0.12);
-  color: var(--accent-yellow);
+  background: var(--trace-context-bg);
+  color: var(--trace-context);
+  border: 1px solid rgba(253, 224, 71, 0.2);
 }
 
 .badgePing {
-  background: rgba(34, 211, 238, 0.12);
-  color: var(--accent-cyan);
+  background: var(--trace-ping-bg);
+  color: var(--trace-ping);
+  border: 1px solid rgba(103, 232, 249, 0.2);
 }
 
 .badgeError {
   background: var(--accent-red-bg);
   color: var(--accent-red);
+  border: 1px solid rgba(248, 113, 113, 0.2);
 }
 
 .badgeStreamEnd {
-  background: rgba(255, 255, 255, 0.06);
+  background: transparent;
   color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
 }
 
 .eventContent {

@@ -193,6 +193,14 @@ export class WebSocketManager {
       return;
     }
 
+    // Detect server reset: if we are in RESUMING state and the server sends a seq
+    // that is lower than expected, it means the server restarted and reset its sequence counter.
+    if (this.state === ConnectionState.RESUMING && message.seq < this.reorderBuffer.getExpectedSeq()) {
+      console.warn("[ws-manager] Server reset detected (sequence number went backwards). Resetting client buffer.");
+      this.reorderBuffer.reset(1);
+      this.setState(ConnectionState.READY);
+    }
+
     // Handle PING immediately (before reorder buffer — timing critical)
     if (message.type === "PING") {
       this.heartbeatHandler.handlePing(message);
@@ -246,10 +254,12 @@ export class WebSocketManager {
     }
 
     // Record if we were actively streaming/resuming before we transition to RECONNECTING
-    if (this.state === ConnectionState.STREAMING || this.state === ConnectionState.TOOL_PENDING || this.state === ConnectionState.RESUMING) {
-      this.wasStreamingBeforeDisconnect = true;
-    } else {
-      this.wasStreamingBeforeDisconnect = false;
+    if (this.state !== ConnectionState.RECONNECTING) {
+      if (this.state === ConnectionState.STREAMING || this.state === ConnectionState.TOOL_PENDING || this.state === ConnectionState.RESUMING) {
+        this.wasStreamingBeforeDisconnect = true;
+      } else {
+        this.wasStreamingBeforeDisconnect = false;
+      }
     }
 
     this.setState(ConnectionState.RECONNECTING);

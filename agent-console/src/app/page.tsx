@@ -18,6 +18,8 @@ export default function Home() {
   const [showTimeline, setShowTimeline] = useState(true);
   const [showContext, setShowContext] = useState(true);
   const [rightPanel, setRightPanel] = useState<"timeline" | "context">("timeline");
+  const [sidebarWidth, setSidebarWidth] = useState(380);
+  const isDraggingRef = useRef(false);
 
   // Initialize WebSocket manager once
   useEffect(() => {
@@ -57,6 +59,46 @@ export default function Home() {
     wsRef.current.sendUserMessage(content);
   }, []);
 
+  const handleLogoClick = useCallback(() => {
+    setShowTimeline(false);
+    setShowContext(false);
+  }, []);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingRef.current = true;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      const containerWidth = window.innerWidth;
+      const newWidth = containerWidth - e.clientX;
+      const minWidth = 250;
+      const maxWidth = containerWidth * 0.7;
+      if (newWidth >= minWidth && newWidth <= maxWidth) {
+        setSidebarWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      }
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
   // Keyboard shortcut: Ctrl+T for timeline, Ctrl+I for context
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -85,8 +127,21 @@ export default function Home() {
 
       {/* Top bar with panel toggles */}
       <div className={styles.topBar}>
-        <div className={styles.logo}>
-          <span className={styles.logoIcon}>⚡</span>
+        <div className={styles.logo} onClick={handleLogoClick} style={{ cursor: "pointer" }}>
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ flexShrink: 0 }}
+          >
+            <polyline points="4 17 10 11 4 5" />
+            <line x1="12" y1="19" x2="20" y2="19" />
+          </svg>
           <span className={styles.logoText}>Streamline Console</span>
         </div>
         <div className={styles.panelToggles}>
@@ -126,13 +181,19 @@ export default function Home() {
           />
         </div>
         {showRightPanel && (
-          <div className={styles.sidePanel}>
-            {rightPanel === "timeline" ? (
-              <TraceTimeline />
-            ) : (
-              <ContextInspector />
-            )}
-          </div>
+          <>
+            <div
+              className={styles.resizeDivider}
+              onMouseDown={handleMouseDown}
+            />
+            <div className={styles.sidePanel} style={{ width: sidebarWidth }}>
+              {rightPanel === "timeline" ? (
+                <TraceTimeline />
+              ) : (
+                <ContextInspector />
+              )}
+            </div>
+          </>
         )}
       </div>
 

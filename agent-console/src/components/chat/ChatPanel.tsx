@@ -22,11 +22,30 @@ export default function ChatPanel({
   const messageListRef = useRef<HTMLDivElement>(null);
   const isAutoScrollRef = useRef(true);
 
-  // Auto-scroll to bottom during streaming
+  // Auto-scroll to bottom during streaming (interpolated for smoothness)
   useEffect(() => {
-    if (isAutoScrollRef.current && messageListRef.current) {
-      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-    }
+    if (!isAutoScrollRef.current) return;
+    const el = messageListRef.current;
+    if (!el) return;
+
+    let frameId: number;
+    
+    const smoothScroll = () => {
+      const current = el.scrollTop;
+      const target = el.scrollHeight - el.clientHeight;
+      const remaining = target - current;
+      
+      if (remaining <= 1) {
+        el.scrollTop = target;
+      } else {
+        // Glide smoothly by covering 20% of the remaining distance per frame
+        el.scrollTop = current + Math.max(1, remaining * 0.2);
+        frameId = requestAnimationFrame(smoothScroll);
+      }
+    };
+    
+    frameId = requestAnimationFrame(smoothScroll);
+    return () => cancelAnimationFrame(frameId);
   }, [messages, streams]);
 
   // Pause auto-scroll if user scrolls up
@@ -69,7 +88,7 @@ export default function ChatPanel({
       >
         {messages.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>⚡</div>
+            <div className={styles.emptyIcon}>_</div>
             <div className={styles.emptyText}>
               Send a message to start the agent
             </div>
@@ -109,7 +128,7 @@ export default function ChatPanel({
             disabled={!canSend || !inputValue.trim()}
             aria-label="Send message"
           >
-            ↑
+            ➤
           </button>
         </div>
       </form>
