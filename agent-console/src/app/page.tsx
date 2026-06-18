@@ -57,6 +57,11 @@ export default function Home() {
     wsRef.current.sendUserMessage(content);
   }, []);
 
+  const handleLogoClick = useCallback(() => {
+    setShowTimeline(false);
+    setShowContext(false);
+  }, []);
+
   // Keyboard shortcut: Ctrl+T for timeline, Ctrl+I for context
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -85,7 +90,7 @@ export default function Home() {
 
       {/* Top bar with panel toggles */}
       <div className={styles.topBar}>
-        <div className={styles.logo}>
+        <div className={styles.logo} onClick={handleLogoClick} style={{ cursor: "pointer" }}>
           <span className={styles.logoText}>Streamline Console</span>
         </div>
         <div className={styles.panelToggles}>
