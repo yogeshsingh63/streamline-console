@@ -5,6 +5,10 @@ Streamline Console is a premium Next.js 16 (App Router) client application desig
 ## Architectural Approach
 The application is structured using a strict protocol-first architecture. A central `WebSocketManager` handles the connection lifecycle and pipes incoming packets to a sequence-based `ReorderBuffer` that reorders out-of-order messages and filters out duplicate frames. The dispatcher then routes these validated events to globally managed Zustand stores, decoupling network ingestion from the React render loop to avoid UI thread blocking.
 
+## Chaos Mode Demonstration
+Watch the screen recording of the application surviving and recovering in Chaos Mode on Loom:
+👉 **[Loom Video Demonstration](https://www.loom.com/share/67e507462fdf4320a946325abe58df4e)**
+
 ---
 
 ## WebSocket Connection State Machine
