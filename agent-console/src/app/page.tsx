@@ -18,6 +18,8 @@ export default function Home() {
   const [showTimeline, setShowTimeline] = useState(true);
   const [showContext, setShowContext] = useState(true);
   const [rightPanel, setRightPanel] = useState<"timeline" | "context">("timeline");
+  const [sidebarWidth, setSidebarWidth] = useState(380);
+  const isDraggingRef = useRef(false);
 
   // Initialize WebSocket manager once
   useEffect(() => {
@@ -60,6 +62,41 @@ export default function Home() {
   const handleLogoClick = useCallback(() => {
     setShowTimeline(false);
     setShowContext(false);
+  }, []);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingRef.current = true;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      const containerWidth = window.innerWidth;
+      const newWidth = containerWidth - e.clientX;
+      const minWidth = 250;
+      const maxWidth = containerWidth * 0.7;
+      if (newWidth >= minWidth && newWidth <= maxWidth) {
+        setSidebarWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      }
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
   }, []);
 
   // Keyboard shortcut: Ctrl+T for timeline, Ctrl+I for context
@@ -144,13 +181,19 @@ export default function Home() {
           />
         </div>
         {showRightPanel && (
-          <div className={styles.sidePanel}>
-            {rightPanel === "timeline" ? (
-              <TraceTimeline />
-            ) : (
-              <ContextInspector />
-            )}
-          </div>
+          <>
+            <div
+              className={styles.resizeDivider}
+              onMouseDown={handleMouseDown}
+            />
+            <div className={styles.sidePanel} style={{ width: sidebarWidth }}>
+              {rightPanel === "timeline" ? (
+                <TraceTimeline />
+              ) : (
+                <ContextInspector />
+              )}
+            </div>
+          </>
         )}
       </div>
 
