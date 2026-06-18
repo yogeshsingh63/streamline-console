@@ -146,33 +146,33 @@
 }
 
 .badgeToken {
-  background: var(--bg-2);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-default);
+  background: var(--trace-token-bg);
+  color: var(--trace-token);
+  border: 1px solid rgba(147, 197, 253, 0.2);
 }
 
 .badgeToolCall {
-  background: var(--bg-3);
-  color: var(--text-primary);
-  border: 1px solid var(--text-muted);
+  background: var(--trace-tool-call-bg);
+  color: var(--trace-tool-call);
+  border: 1px solid rgba(192, 132, 252, 0.2);
 }
 
 .badgeToolResult {
-  background: var(--bg-2);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
+  background: var(--trace-tool-result-bg);
+  color: var(--trace-tool-result);
+  border: 1px solid rgba(134, 239, 172, 0.2);
 }
 
 .badgeContext {
-  background: var(--bg-2);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
+  background: var(--trace-context-bg);
+  color: var(--trace-context);
+  border: 1px solid rgba(253, 224, 71, 0.2);
 }
 
 .badgePing {
-  background: var(--bg-2);
-  color: var(--text-muted);
-  border: 1px solid var(--border-subtle);
+  background: var(--trace-ping-bg);
+  color: var(--trace-ping);
+  border: 1px solid rgba(103, 232, 249, 0.2);
 }
 
 .badgeError {

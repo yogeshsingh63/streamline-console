@@ -32,6 +32,18 @@
   --accent-orange: #fb923c;
   --accent-cyan: #22d3ee;
 
+  /* Trace specific badge colors (Desaturated pastels for visual grouping) */
+  --trace-token: #93c5fd;
+  --trace-token-bg: rgba(147, 197, 253, 0.08);
+  --trace-tool-call: #c084fc;
+  --trace-tool-call-bg: rgba(192, 132, 252, 0.08);
+  --trace-tool-result: #86efac;
+  --trace-tool-result-bg: rgba(134, 239, 172, 0.08);
+  --trace-context: #fde047;
+  --trace-context-bg: rgba(253, 224, 71, 0.08);
+  --trace-ping: #67e8f9;
+  --trace-ping-bg: rgba(103, 232, 249, 0.08);
+
   /* Borders */
   --border-subtle: #18181b;
   --border-default: #27272a;
