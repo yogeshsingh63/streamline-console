@@ -10,30 +10,41 @@ The application is structured using a strict protocol-first architecture. A cent
 ## WebSocket Connection State Machine
 
 ```mermaid
-stateDiagram-v2
-    [*] --> DISCONNECTED
+flowchart TD
+    DISCONNECTED([DISCONNECTED])
+    CONNECTING([CONNECTING])
+    CONNECTED([CONNECTED])
+    RESUMING([RESUMING])
+    READY([READY])
+    STREAMING([STREAMING])
+    TOOL_PENDING([TOOL_PENDING])
+    RECONNECTING([RECONNECTING])
+
+    DISCONNECTED -->|connect| CONNECTING
+    CONNECTING -->|onOpen| CONNECTED
     
-    DISCONNECTED --> CONNECTING : connect()
-    CONNECTING --> CONNECTED : onOpen
-    CONNECTING --> RECONNECTING : onError / onClose
+    CONNECTED -->|session exists| RESUMING
+    CONNECTED -->|no session| READY
     
-    CONNECTED --> RESUMING : has session (processedSeq > 0)
-    CONNECTED --> READY : no session
+    RESUMING -->|recv TOKEN| STREAMING
+    READY -->|send message| STREAMING
     
-    RESUMING --> STREAMING : TOKEN received
-    READY --> STREAMING : USER_MESSAGE sent / TOKEN received
+    STREAMING -->|recv TOOL_CALL| TOOL_PENDING
+    STREAMING -->|recv STREAM_END| READY
     
-    STREAMING --> TOOL_PENDING : TOOL_CALL received
-    STREAMING --> READY : STREAM_END received
+    TOOL_PENDING -->|recv TOOL_RESULT| STREAMING
     
-    TOOL_PENDING --> STREAMING : TOOL_RESULT received / timeout
+    STREAMING -->|connection drop| RECONNECTING
+    TOOL_PENDING -->|connection drop| RECONNECTING
+    READY -->|connection drop| RECONNECTING
+    CONNECTING -->|timeout / error| RECONNECTING
     
-    STREAMING --> RECONNECTING : onClose / onError (drop)
-    TOOL_PENDING --> RECONNECTING : onClose / onError (drop)
-    READY --> RECONNECTING : onClose / onError (drop)
-    
-    RECONNECTING --> CONNECTING : retry timer expires
-    RECONNECTING --> DISCONNECTED : max retries exceeded
+    RECONNECTING -->|retry timer| CONNECTING
+    RECONNECTING -->|max retries exceeded| DISCONNECTED
+
+    classDef default fill:#18181b,stroke:#3f3f46,color:#fafafa,stroke-width:1.5px;
+    classDef highlight fill:#fafafa,stroke:#fafafa,color:#000000,stroke-width:1.5px;
+    class DISCONNECTED,RECONNECTING highlight;
 ```
 
 ---
